@@ -26,6 +26,10 @@ class MusicService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        newMediaPlayer()
+    }
+
+    private fun newMediaPlayer() {
         mediaPlayer = MediaPlayer()
         mediaPlayer!!.apply {
             setAudioAttributes(
@@ -34,6 +38,9 @@ class MusicService : Service() {
             )
             setOnCompletionListener {
                 switchByBoolean(false)
+                sendBroadcast(
+                    Intent("com.niki.cloudmusic.music.NEXT_ONE")
+                )
             }
         }
     }
@@ -67,7 +74,7 @@ class MusicService : Service() {
             mediaPlayer = null
         }
 
-        mediaPlayer = MediaPlayer()
+        newMediaPlayer()
         try {
             mediaPlayer!!.setDataSource(url)
             mediaPlayer!!.prepare()

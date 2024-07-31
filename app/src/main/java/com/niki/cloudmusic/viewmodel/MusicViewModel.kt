@@ -66,7 +66,7 @@ class MusicViewModel(application: Application) : BaseViewModel(application) {
         filter = IntentFilter()
         filter.addAction("com.niki.cloudmusic.music.NEW_STATUS")
         filter.addAction("com.niki.cloudmusic.music.NEW_PROGRESS")
-        filter.addAction("com.niki.cloudmusic.music.FINISHED")
+        filter.addAction("com.niki.cloudmusic.music.NEXT_ONE")
 
         receiver = MusicReceiver()
         application.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
@@ -349,6 +349,10 @@ class MusicViewModel(application: Application) : BaseViewModel(application) {
                 "com.niki.cloudmusic.music.NEW_PROGRESS" -> {
                     val progress = intent.getIntExtra("progress", 0)
                     songPosition.value = progress
+                }
+
+                "com.niki.cloudmusic.music.NEXT_ONE" -> {
+                    nextSong()
                 }
             }
         }
