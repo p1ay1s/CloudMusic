@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_main"
+    app:startDestination="@+id/menu_listen">
+
+    <fragment
+        android:id="@+id/menu_listen"
+        android:name="com.niki.cloudmusic.view.fragments.ListenFragment"
+        android:label="Listen now"
+        tools:layout="@layout/fragment_listen" />
+
+    <fragment
+        android:id="@+id/menu_my"
+        android:name="com.niki.cloudmusic.view.fragments.MyFragment"
+        android:label="My"
+        tools:layout="@layout/fragment_my" />
+
+    <fragment
+        android:id="@+id/menu_search"
+        android:name="com.niki.cloudmusic.view.fragments.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search" />
+</navigation>

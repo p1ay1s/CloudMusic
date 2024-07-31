@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.niki.cloudmusic.viewmodel.MusicViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/cover"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="100dp"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:riv_corner_radius="16dp" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cover"
+            app:layout_constraintWidth_percent="0.7" />
+
+        <TextView
+            android:id="@+id/singer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toTopOf="@id/play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
+
+        <ImageView
+            android:id="@+id/play"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="90dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/next"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:onClick="@{() -> viewModel.nextSong()}"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_next"
+            app:layout_constraintBottom_toBottomOf="@id/play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/play"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/previous"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:onClick="@{() -> viewModel.previousSong()}"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_previous"
+            app:layout_constraintBottom_toBottomOf="@id/play"
+            app:layout_constraintEnd_toStartOf="@id/play"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/mode"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="25dp"
+            android:onClick="@{() -> viewModel.switchMode()}"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_loop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/list"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="25dp"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_list"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
