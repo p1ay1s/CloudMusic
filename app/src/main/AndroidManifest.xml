@@ -24,7 +24,7 @@
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".MyService"
+            android:name=".RemoteService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback" />

@@ -49,6 +49,10 @@ class PlayerFragment :
             binding.play.load(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
         }
 
+        binding.play.setOnClickListener {
+            viewModel.switchStatus()
+        }
+
         viewModel.updateMusicProgress()
 
 

@@ -19,11 +19,10 @@ class PreferencesRepository(context: Context) : BaseRepository() {
 
     fun getCookie(): String? {
         val mCookie = preferences.getString(cookieString, "")
-        // mCookie
-        if (mCookie == "")
-            return null
+        return if (mCookie == "")
+            null
         else
-            return URLEncoder.encode(preferences.getString(cookieString, ""), "utf-8")
+            URLEncoder.encode(preferences.getString(cookieString, ""), "utf-8")
     }
 
     fun saveBaseUrl(value: String) {

@@ -8,7 +8,8 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -17,20 +18,18 @@ import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.niki.cloudmusic.repository.model.Song
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URL
+import com.squareup.picasso.Picasso
 
 
-class MyService : Service() {
+class RemoteService : Service() {
     lateinit var myRemoteViews: RemoteViews
-    private val binder = MyBinder()
+    private val binder = RemoteBinder()
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate() {
         super.onCreate()
 
-        myRemoteViews = RemoteViews(this@MyService.packageName, R.layout.layout_notification)
+        myRemoteViews = RemoteViews(this@RemoteService.packageName, R.layout.layout_notification)
         startForeground(
             123,
             createNotification(),
@@ -38,25 +37,33 @@ class MyService : Service() {
         )
     }
 
-    private suspend fun setCover(
+    private fun setCover(
         imageUrl: String,
         callback: () -> Unit
     ) {
-        withContext(Dispatchers.IO) {
-            try {
-                val url = URL(imageUrl)
-                val bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                withContext(Dispatchers.Main) {
+        Picasso.get()
+            .load(imageUrl)
+            .resize(128, 128)
+            .into(object : com.squareup.picasso.Target {
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                     myRemoteViews.setImageViewBitmap(R.id.nCover, bitmap)
                     callback()
                 }
-            } catch (ignored: Exception) {
-                callback()
-            }
-        }
+
+                override fun onBitmapFailed(
+                    e: Exception?,
+                    errorDrawable: Drawable?
+                ) {
+                    callback()
+                }
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                }
+            })
+
     }
 
-    suspend fun setSong(song: Song, callback: () -> Unit) {
+    fun setSong(song: Song, callback: () -> Unit) {
         val builder = StringBuilder()
         for (artist in song.ar!!) {
             builder.append(artist.name)
@@ -81,19 +88,19 @@ class MyService : Service() {
     }
 
     fun createNotification(): Notification {
-        val intentPlay = Intent(this, MyService::class.java)
+        val intentPlay = Intent(this, RemoteService::class.java)
         intentPlay.action = "play"
         val pendingIntentPlay =
             PendingIntent.getService(this, 0, intentPlay, PendingIntent.FLAG_MUTABLE)
         myRemoteViews.setOnClickPendingIntent(R.id.nPlay, pendingIntentPlay)
 
-        val intentPrevious = Intent(this, MyService::class.java)
+        val intentPrevious = Intent(this, RemoteService::class.java)
         intentPrevious.action = "previous"
         val pendingIntentPrevious =
             PendingIntent.getService(this, 1, intentPrevious, PendingIntent.FLAG_MUTABLE)
         myRemoteViews.setOnClickPendingIntent(R.id.nPrevious, pendingIntentPrevious)
 
-        val intentNext = Intent(this, MyService::class.java)
+        val intentNext = Intent(this, RemoteService::class.java)
         intentNext.action = "next"
         val pendingIntentNext =
             PendingIntent.getService(this, 2, intentNext, PendingIntent.FLAG_MUTABLE)
@@ -145,7 +152,7 @@ class MyService : Service() {
         return binder
     }
 
-    inner class MyBinder : Binder() {
-        fun getService(): MyService = this@MyService
+    inner class RemoteBinder : Binder() {
+        fun getService(): RemoteService = this@RemoteService
     }
 }

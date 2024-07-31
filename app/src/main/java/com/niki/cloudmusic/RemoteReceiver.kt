@@ -6,7 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.niki.cloudmusic.viewmodel.MusicViewModel
 
-class MyBroadcastReceiver(val viewModel: MusicViewModel) : BroadcastReceiver() {
+class RemoteReceiver(val viewModel: MusicViewModel) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             "com.niki.cloudmusic.ACTION_PLAY" -> {

@@ -17,8 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.niki.cloudmusic.MusicService
-import com.niki.cloudmusic.MyBroadcastReceiver
-import com.niki.cloudmusic.MyService
+import com.niki.cloudmusic.RemoteReceiver
+import com.niki.cloudmusic.RemoteService
 import com.niki.cloudmusic.R
 import com.niki.cloudmusic.databinding.ActivityMainBinding
 import com.niki.cloudmusic.repository.model.Song
@@ -40,7 +40,7 @@ const val ip = "10.33.74.45"
 const val natapp = "http://niki-android-dev.natapp1.cc"
 
 class MainActivity : AppCompatActivity() {
-    private var myService: MyService? = null
+    private var remoteService: RemoteService? = null
     private var musicService: MusicService? = null
     private lateinit var binding: ActivityMainBinding
     private var musicStarted = false
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     var fragmentManagerHelper: FragmentManagerHelper? = null
 
     private lateinit var filter: IntentFilter
-    private lateinit var receiver: MyBroadcastReceiver
+    private lateinit var receiver: RemoteReceiver
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var musicViewModel: MusicViewModel
 
@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             loginViewModel.preferencesRepository.saveBaseUrl(natapp)
+//            loginViewModel.preferencesRepository.saveBaseUrl("http://10.33.74.45:3000")
             loginViewModel.getLoginState()
 
             fragmentManagerHelper?.switchToFragment(0)
@@ -98,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         filter.addAction("com.niki.cloudmusic.ACTION_PREVIOUS")
         filter.addAction("com.niki.cloudmusic.ACTION_NEXT")
 
-        receiver = MyBroadcastReceiver(musicViewModel)
+        receiver = RemoteReceiver(musicViewModel)
         registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED)
 
         // 旋转动画
@@ -139,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
         startService(musicIntent)
 
-        option(true)
+        option(false)
 
         /**
          *  当前歌曲监听-歌名、图片刷新
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
                 // 第一次播放音乐时启动通知栏控制器
                 if (!musicStarted) {
-                    val intent = Intent(this, MyService::class.java).also { intent ->
+                    val intent = Intent(this, RemoteService::class.java).also { intent ->
                         bindService(intent, MyConnection(), Context.BIND_AUTO_CREATE)
                     }
                     startService(intent)
@@ -226,22 +227,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshRemotePlayer(song: Song) {
-        if (myService == null) return
+        if (remoteService == null) return
         GlobalScope.launch(Dispatchers.Main) {
-            myService!!.setSong(song) {
+            remoteService!!.setSong(song) {
                 updateRemoteView()
             }
         }
     }
 
     private fun refreshPlayingStatus(isPlaying: Boolean) {
-        if (myService == null) return
-        myService!!.setPLayingStatus(isPlaying)
+        if (remoteService == null) return
+        remoteService!!.setPLayingStatus(isPlaying)
         updateRemoteView()
     }
 
     private fun updateRemoteView() {
-        val notification = myService!!.createNotification()
+        val notification = remoteService!!.createNotification()
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(123, notification)
@@ -249,8 +250,8 @@ class MainActivity : AppCompatActivity() {
 
     inner class MyConnection : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as MyService.MyBinder
-            myService = binder.getService()
+            val binder = service as RemoteService.RemoteBinder
+            remoteService = binder.getService()
             musicViewModel.apply {
                 currentSong.observe(this@MainActivity) { song ->
                     refreshRemotePlayer(song)
@@ -262,7 +263,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            myService = null
+            remoteService = null
         }
     }
 
